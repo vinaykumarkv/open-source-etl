@@ -49,6 +49,15 @@ def save_analysis_results(df, db_name):
         avg_rating_by_category.to_sql('avg_rating_by_category', conn, if_exists='replace', index=False)
         print("Saved average rating by category analysis to SQLite.")
 
+        # Average sentiment by main_category
+        avg_sentiment_by_category = df.groupby('main_category')['review_sentiment'].mean().reset_index().sort_values(
+            by='review_sentiment', ascending=False).head(5)
+        print(f"Average sentiment by category DataFrame: {len(avg_sentiment_by_category)} rows")
+        if avg_sentiment_by_category.empty:
+            print("Warning: avg_sentiment_by_category DataFrame is empty!")
+        avg_sentiment_by_category.to_sql('avg_sentiment_by_category', conn, if_exists='replace', index=False)
+        print("Saved average sentiment by category analysis to SQLite.")
+
         conn.close()
     except Exception as e:
         print(f"Error saving analysis results: {e}")
